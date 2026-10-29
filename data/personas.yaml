@@ -1,0 +1,311 @@
+# Parameters of the SYNTHETIC transaction generator (ml/scripts/05_generate_transactions.py).
+# Everything produced from this file is synthetic: it is used to train and to check the forecaster,
+# and for the demo data in the app. It is not a measurement of real households.
+#
+# NOTE: the `food.*` shares of every persona were multiplied by 1.45 after the first run (food was 26.5% of
+# spending, Rosstat reference is ~one third); the realised share is 32.8%.
+# Calibration target (guide 7.3): food ~ one third of consumer spending (Rosstat household budget
+# survey 2019-2023, regional figures 31-34%). `tests/test_transactions.py` checks the realised share.
+
+simulation:
+  start: "2024-10-01"
+  months: 24
+  inflation_per_month: [0.004, 0.006]   # a user's monthly price growth is drawn from this range
+  impulse_day_prob: 0.04                # share of days with extra discretionary purchases
+  payday_boost: 1.35                    # discretionary purchase rate multiplier on the 3 days after payday
+  taste_sigma: 0.25                     # per-user lognormal scatter of every subcategory's spending level
+  big_expenses:                         # (subcategory, probability per month, amount range in roubles)
+    - [home.appliances, 0.05, [8000, 60000]]
+    - [health.doctors, 0.08, [2500, 15000]]
+    - [transport.car_service, 0.06, [3000, 25000]]
+    - [clothes_beauty.clothes, 0.10, [3000, 15000]]
+    - [leisure.travel, 0.03, [15000, 90000]]
+
+# Variable spending. per_week = average number of purchases per week for a user with freq_mult 1;
+# dow = relative weight of Mon..Sun; sigma = lognormal sigma of a single purchase;
+# season = key into `seasonality`; discretionary = reacts to payday and impulse days.
+events:
+  food.dairy:          {per_week: 2.0, dow: [1, 1, 1, 1, 1.2, 1.6, 1.4], sigma: 0.5, season: food}
+  food.meat_fish:      {per_week: 1.5, dow: [1, 1, 1, 1, 1.2, 1.6, 1.3], sigma: 0.6, season: food}
+  food.produce:        {per_week: 1.8, dow: [1, 1, 1, 1, 1.2, 1.6, 1.4], sigma: 0.55, season: produce}
+  food.bakery:         {per_week: 2.5, dow: [1, 1, 1, 1, 1, 1.3, 1.3], sigma: 0.4, season: food}
+  food.grocery:        {per_week: 2.2, dow: [1, 1, 1, 1, 1.2, 1.8, 1.4], sigma: 0.65, season: food}
+  food.sweets_snacks:  {per_week: 2.0, dow: [1, 1, 1, 1, 1.3, 1.5, 1.5], sigma: 0.6, season: food, discretionary: true}
+  food.drinks:         {per_week: 1.5, dow: [1, 1, 1, 1, 1.2, 1.5, 1.4], sigma: 0.5, season: summer_food}
+  food.alcohol:        {per_week: 0.6, dow: [0.5, 0.5, 0.6, 0.8, 2.0, 2.2, 1.5], sigma: 0.6, season: alcohol, discretionary: true}
+  food.ready:          {per_week: 0.8, dow: [1, 1, 1, 1, 1.3, 1.2, 1.2], sigma: 0.5, season: food}
+  eating_out.cafe:     {per_week: 0.9, dow: [0.6, 0.7, 0.8, 1, 1.8, 2.0, 1.6], sigma: 0.6, season: leisure, discretionary: true}
+  eating_out.fastfood: {per_week: 0.8, dow: [1, 1, 1, 1, 1.5, 1.6, 1.3], sigma: 0.5, season: leisure, discretionary: true}
+  eating_out.coffee:   {per_week: 2.0, dow: [1.5, 1.4, 1.4, 1.3, 1.2, 0.5, 0.4], sigma: 0.35, season: coffee, discretionary: true}
+  eating_out.delivery: {per_week: 0.7, dow: [0.7, 0.8, 0.9, 1, 1.7, 1.8, 1.4], sigma: 0.45, season: leisure, discretionary: true}
+  transport.public:    {per_week: 4.0, dow: [1.3, 1.3, 1.3, 1.3, 1.3, 0.4, 0.4], sigma: 0.25, season: flat}
+  transport.taxi:      {per_week: 0.8, dow: [0.7, 0.7, 0.8, 1, 1.8, 1.9, 1.2], sigma: 0.5, season: winter, discretionary: true}
+  transport.fuel:      {per_week: 0.8, dow: [1, 1, 1, 1, 1.3, 1.3, 1.1], sigma: 0.3, season: flat}
+  health.pharmacy:     {per_week: 0.6, dow: [1, 1, 1, 1, 1, 1, 1], sigma: 0.7, season: cold}
+  health.doctors:      {per_week: 0.12, dow: [1.2, 1.2, 1.2, 1.2, 1.0, 0.3, 0.1], sigma: 0.8, season: cold}
+  health.sport:        {per_week: 0.3, dow: [1, 1, 1, 1, 1, 1, 1], sigma: 0.5, season: flat}
+  health.hygiene:      {per_week: 0.5, dow: [1, 1, 1, 1, 1, 1.5, 1.2], sigma: 0.5, season: flat}
+  home.chemicals:      {per_week: 0.4, dow: [1, 1, 1, 1, 1, 1.5, 1.2], sigma: 0.5, season: flat}
+  home.household:      {per_week: 0.4, dow: [1, 1, 1, 1, 1, 1.5, 1.3], sigma: 0.6, season: flat}
+  home.repair:         {per_week: 0.3, dow: [1, 1, 1, 1, 1, 1.8, 1.6], sigma: 0.8, season: spring_summer}
+  clothes_beauty.clothes:    {per_week: 0.25, dow: [0.8, 0.8, 0.9, 1, 1.3, 2.0, 1.6], sigma: 0.7, season: clothes, discretionary: true}
+  clothes_beauty.cosmetics:  {per_week: 0.35, dow: [1, 1, 1, 1, 1.2, 1.6, 1.3], sigma: 0.6, season: flat, discretionary: true}
+  clothes_beauty.salons:     {per_week: 0.2, dow: [0.8, 0.9, 1, 1.1, 1.4, 2.0, 1.0], sigma: 0.45, season: flat}
+  family_kids.goods:         {per_week: 0.9, dow: [1, 1, 1, 1, 1.2, 1.5, 1.3], sigma: 0.6, season: kids}
+  family_kids.activities:    {per_week: 0.4, dow: [1, 1, 1, 1, 1, 0.8, 0.6], sigma: 0.4, season: kids_school}
+  family_kids.school:        {per_week: 0.25, dow: [1, 1, 1, 1, 1, 1, 0.8], sigma: 0.7, season: school}
+  pets.food:           {per_week: 0.5, dow: [1, 1, 1, 1, 1, 1.5, 1.3], sigma: 0.5, season: flat}
+  pets.vet:            {per_week: 0.1, dow: [1, 1, 1, 1, 1, 1, 0.7], sigma: 0.8, season: flat}
+  pets.goods:          {per_week: 0.2, dow: [1, 1, 1, 1, 1, 1.5, 1.3], sigma: 0.6, season: flat}
+  leisure.events:      {per_week: 0.3, dow: [0.4, 0.5, 0.7, 1, 2.0, 2.4, 1.6], sigma: 0.5, season: leisure, discretionary: true}
+  leisure.games:       {per_week: 0.3, dow: [1, 1, 1, 1, 1.3, 1.6, 1.6], sigma: 0.8, season: winter, discretionary: true}
+  leisure.hobby:       {per_week: 0.3, dow: [1, 1, 1, 1, 1.2, 1.6, 1.5], sigma: 0.6, season: flat, discretionary: true}
+  education.courses:   {per_week: 0.15, dow: [1, 1, 1, 1, 1, 0.8, 0.6], sigma: 0.4, season: school}
+  education.books:     {per_week: 0.1, dow: [1, 1, 1, 1, 1, 1.5, 1.3], sigma: 0.6, season: school}
+
+# Month multipliers for the `season` keys above (index 0 = January). Missing key = flat (1.0).
+seasonality:
+  food:          [1.00, 0.97, 1.00, 1.00, 1.00, 1.00, 0.98, 0.98, 1.00, 1.00, 1.02, 1.15]
+  produce:       [0.90, 0.88, 0.92, 1.00, 1.05, 1.15, 1.25, 1.30, 1.15, 1.00, 0.92, 0.95]
+  summer_food:   [0.85, 0.85, 0.90, 1.00, 1.15, 1.30, 1.40, 1.40, 1.10, 0.95, 0.85, 0.95]
+  alcohol:       [1.30, 0.90, 0.95, 0.95, 1.10, 1.00, 1.05, 1.05, 0.95, 0.95, 0.95, 1.60]
+  coffee:        [1.10, 1.05, 1.00, 1.00, 0.95, 0.90, 0.85, 0.85, 1.00, 1.05, 1.10, 1.10]
+  leisure:       [1.10, 0.95, 1.00, 1.00, 1.05, 1.10, 1.15, 1.15, 1.00, 0.95, 1.00, 1.35]
+  winter:        [1.25, 1.15, 1.00, 0.95, 0.90, 0.90, 0.90, 0.90, 0.95, 1.00, 1.10, 1.25]
+  cold:          [1.40, 1.30, 1.15, 0.90, 0.80, 0.75, 0.75, 0.80, 1.00, 1.20, 1.35, 1.40]
+  spring_summer: [0.70, 0.70, 0.90, 1.20, 1.50, 1.50, 1.40, 1.30, 1.00, 0.85, 0.70, 0.70]
+  clothes:       [0.80, 0.85, 1.10, 1.20, 1.00, 0.90, 0.85, 1.10, 1.25, 1.20, 1.10, 1.40]
+  kids:          [1.00, 0.95, 1.00, 1.00, 1.00, 1.05, 1.00, 1.10, 1.35, 1.05, 1.00, 1.40]
+  kids_school:   [1.00, 1.00, 1.00, 1.00, 0.90, 0.40, 0.40, 0.40, 1.60, 1.30, 1.10, 1.00]
+  school:        [0.90, 0.80, 0.80, 0.80, 0.70, 0.60, 0.60, 1.00, 3.00, 1.20, 0.90, 0.80]
+
+# Regular payments. Amounts: `rent_frac` of income; `utilities_frac` of income (winter x1.3);
+# phone/internet absolute roubles; subscriptions are drawn from the pool (service, price).
+regular:
+  utilities_winter: [1.35, 1.35, 1.2, 1.0, 0.9, 0.85, 0.85, 0.85, 0.9, 1.0, 1.2, 1.35]
+  internet_pool: [500, 600, 750, 900]
+  mobile_pool: [350, 450, 600, 800]
+  subscription_pool:
+    - [subscriptions.streaming, 299]
+    - [subscriptions.streaming, 399]
+    - [subscriptions.streaming, 549]
+    - [subscriptions.cloud_apps, 99]
+    - [subscriptions.cloud_apps, 199]
+    - [subscriptions.cloud_apps, 349]
+    - [subscriptions.other, 149]
+    - [subscriptions.other, 299]
+    - [subscriptions.other, 490]
+
+personas:
+  student:
+    weight: 0.20
+    income: {median: 32000, sigma: 0.25}
+    spend_ratio: [0.85, 1.00]
+    salary_days: [10]
+    rent_frac: 0.0          # lives with parents or in a dormitory
+    rent_prob: 0.25         # a quarter of students rent a room
+    rent_frac_if_rent: 0.30
+    utilities_frac: 0.0
+    n_subscriptions: [1, 3]
+    save_frac: 0.0
+    freq_mult: {food.ready: 1.4, eating_out.fastfood: 1.5, eating_out.coffee: 1.2, transport.fuel: 0.0,
+                family_kids.goods: 0.0, family_kids.activities: 0.0, family_kids.school: 0.0,
+                pets.food: 0.3, pets.vet: 0.3, pets.goods: 0.3, education.courses: 1.5}
+    shares:
+      food.dairy: 0.0725
+      food.meat_fish: 0.0653
+      food.produce: 0.058
+      food.bakery: 0.029
+      food.grocery: 0.087
+      food.sweets_snacks: 0.058
+      food.drinks: 0.0435
+      food.alcohol: 0.0362
+      food.ready: 0.0508
+      eating_out.cafe: 0.04
+      eating_out.fastfood: 0.05
+      eating_out.coffee: 0.035
+      eating_out.delivery: 0.03
+      transport.public: 0.05
+      transport.taxi: 0.03
+      health.pharmacy: 0.02
+      health.sport: 0.015
+      health.hygiene: 0.02
+      home.chemicals: 0.01
+      home.household: 0.01
+      clothes_beauty.clothes: 0.05
+      clothes_beauty.cosmetics: 0.025
+      clothes_beauty.salons: 0.015
+      pets.food: 0.005
+      leisure.events: 0.03
+      leisure.games: 0.04
+      leisure.hobby: 0.02
+      education.courses: 0.04
+      education.books: 0.02
+  couple:
+    weight: 0.25
+    income: {median: 105000, sigma: 0.3}
+    spend_ratio: [0.75, 0.95]
+    salary_days: [5, 20]
+    rent_prob: 0.55
+    rent_frac_if_rent: 0.25
+    utilities_frac: 0.05
+    n_subscriptions: [2, 5]
+    save_frac: 0.08
+    freq_mult: {family_kids.goods: 0.0, family_kids.activities: 0.0, family_kids.school: 0.0, pets.vet: 0.6}
+    shares:
+      food.dairy: 0.058
+      food.meat_fish: 0.0653
+      food.produce: 0.058
+      food.bakery: 0.0217
+      food.grocery: 0.0725
+      food.sweets_snacks: 0.0435
+      food.drinks: 0.029
+      food.alcohol: 0.0362
+      food.ready: 0.0362
+      eating_out.cafe: 0.05
+      eating_out.fastfood: 0.015
+      eating_out.coffee: 0.02
+      eating_out.delivery: 0.03
+      transport.public: 0.015
+      transport.taxi: 0.03
+      transport.fuel: 0.045
+      health.pharmacy: 0.02
+      health.sport: 0.025
+      health.hygiene: 0.015
+      home.chemicals: 0.012
+      home.household: 0.012
+      home.repair: 0.02
+      clothes_beauty.clothes: 0.06
+      clothes_beauty.cosmetics: 0.03
+      clothes_beauty.salons: 0.03
+      pets.food: 0.012
+      pets.vet: 0.01
+      pets.goods: 0.006
+      leisure.events: 0.04
+      leisure.games: 0.015
+      leisure.hobby: 0.03
+      education.courses: 0.015
+      education.books: 0.008
+  family_kids:
+    weight: 0.25
+    income: {median: 140000, sigma: 0.3}
+    spend_ratio: [0.80, 1.00]
+    salary_days: [3, 18]
+    rent_prob: 0.35
+    rent_frac_if_rent: 0.22
+    utilities_frac: 0.06
+    n_subscriptions: [2, 5]
+    save_frac: 0.05
+    freq_mult: {food.dairy: 1.3, food.produce: 1.2, food.grocery: 1.2, pets.vet: 0.6}
+    shares:
+      food.dairy: 0.0798
+      food.meat_fish: 0.0798
+      food.produce: 0.0725
+      food.bakery: 0.029
+      food.grocery: 0.1015
+      food.sweets_snacks: 0.058
+      food.drinks: 0.0362
+      food.alcohol: 0.0174
+      food.ready: 0.0362
+      eating_out.cafe: 0.025
+      eating_out.fastfood: 0.02
+      eating_out.coffee: 0.008
+      eating_out.delivery: 0.02
+      transport.public: 0.01
+      transport.taxi: 0.015
+      transport.fuel: 0.05
+      health.pharmacy: 0.03
+      health.sport: 0.012
+      health.hygiene: 0.02
+      home.chemicals: 0.018
+      home.household: 0.018
+      home.repair: 0.02
+      clothes_beauty.clothes: 0.06
+      clothes_beauty.cosmetics: 0.02
+      clothes_beauty.salons: 0.02
+      family_kids.goods: 0.07
+      family_kids.activities: 0.035
+      family_kids.school: 0.03
+      pets.food: 0.01
+      leisure.events: 0.03
+      leisure.hobby: 0.01
+      education.courses: 0.012
+      education.books: 0.008
+  pensioner:
+    weight: 0.15
+    income: {median: 28000, sigma: 0.2}
+    spend_ratio: [0.85, 1.00]
+    salary_days: [12]
+    rent_prob: 0.0
+    rent_frac_if_rent: 0.0
+    utilities_frac: 0.11
+    n_subscriptions: [0, 2]
+    save_frac: 0.0
+    freq_mult: {food.produce: 1.3, health.pharmacy: 1.8, eating_out.coffee: 0.2, eating_out.delivery: 0.2,
+                eating_out.fastfood: 0.2, family_kids.goods: 0.0, family_kids.activities: 0.0, family_kids.school: 0.0,
+                transport.fuel: 0.3, leisure.games: 0.2}
+    shares:
+      food.dairy: 0.1015
+      food.meat_fish: 0.087
+      food.produce: 0.1015
+      food.bakery: 0.0508
+      food.grocery: 0.116
+      food.sweets_snacks: 0.0435
+      food.drinks: 0.0435
+      food.alcohol: 0.0145
+      food.ready: 0.0217
+      eating_out.cafe: 0.01
+      transport.public: 0.015
+      health.pharmacy: 0.12
+      health.doctors: 0.01
+      health.hygiene: 0.018
+      home.chemicals: 0.012
+      home.household: 0.015
+      home.repair: 0.01
+      clothes_beauty.clothes: 0.02
+      pets.food: 0.015
+      pets.vet: 0.008
+      leisure.hobby: 0.02
+      leisure.events: 0.01
+  freelancer:
+    weight: 0.15
+    income: {median: 90000, sigma: 0.45}     # irregular income
+    spend_ratio: [0.65, 0.95]
+    salary_days: [7, 14, 25]                 # three irregular payments
+    rent_prob: 0.5
+    rent_frac_if_rent: 0.27
+    utilities_frac: 0.05
+    n_subscriptions: [3, 6]
+    save_frac: 0.10
+    freq_mult: {family_kids.goods: 0.0, family_kids.activities: 0.0, family_kids.school: 0.0,
+                eating_out.coffee: 1.6, eating_out.delivery: 1.4}
+    shares:
+      food.dairy: 0.058
+      food.meat_fish: 0.058
+      food.produce: 0.0508
+      food.bakery: 0.0217
+      food.grocery: 0.0653
+      food.sweets_snacks: 0.0435
+      food.drinks: 0.0362
+      food.alcohol: 0.029
+      food.ready: 0.0435
+      eating_out.cafe: 0.05
+      eating_out.fastfood: 0.02
+      eating_out.coffee: 0.035
+      eating_out.delivery: 0.05
+      transport.public: 0.015
+      transport.taxi: 0.04
+      transport.fuel: 0.02
+      health.pharmacy: 0.015
+      health.sport: 0.025
+      health.hygiene: 0.015
+      home.chemicals: 0.01
+      home.household: 0.012
+      clothes_beauty.clothes: 0.045
+      clothes_beauty.cosmetics: 0.025
+      clothes_beauty.salons: 0.02
+      leisure.events: 0.04
+      leisure.games: 0.03
+      leisure.hobby: 0.03
+      education.courses: 0.04
+      education.books: 0.015

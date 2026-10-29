@@ -1,0 +1,80 @@
+# Open*Facts category tags -> our subcategories. DRAFT: review ml/reports/off_map_samples.md
+# after the first real run and adjust.
+#
+# Rules are checked top to bottom, FIRST MATCH WINS. A rule matches when any tag of the product
+# equals a pattern, or starts with it (pattern "en:cheeses" also matches "en:cheeses-from-france").
+# Because OFF tags contain every ancestor (an alcoholic drink also carries "en:beverages"),
+# specific rules must stay above general ones.
+
+food:                       # D1 food.parquet
+  - to: family_kids.goods
+    tags: ["en:baby-foods", "en:baby-milks", "en:infant-formulas", "en:baby-cereals"]
+  # Ice cream and dairy desserts are "sweets", and must be checked BEFORE the dairy rule because
+  # they also carry the ancestor tag en:dairies.
+  - to: food.sweets_snacks
+    tags: ["en:ice-creams", "en:ice-creams-and-sorbets", "en:sorbets", "en:frozen-desserts", "en:dairy-desserts"]
+  - to: food.alcohol
+    tags: ["en:alcoholic-beverages", "en:beers", "en:wines", "en:spirits", "en:ciders", "en:liqueurs"]
+  # Dairy BEFORE drinks: kefir, ryazhenka and drinking yoghurt also carry en:beverages (dairy-drinks),
+  # and yoghurts also carry en:desserts. en:fermented-foods was removed: it holds sauerkraut, kimchi, kombucha.
+  - to: food.dairy
+    tags: ["en:dairies", "en:milks", "en:cheeses", "en:yogurts", "en:eggs", "en:fermented-milk-products",
+           "en:butters", "en:creams", "en:dairy-drinks", "en:kefirs"]
+  # Chocolate and confectionery BEFORE drinks: they carry the ancestor en:cocoa-and-its-products, which
+  # used to send milk chocolate and candies to "drinks" (second run). Crackers/rusks are snacks (Кириешки),
+  # not bread.
+  - to: food.sweets_snacks
+    tags: ["en:chocolates", "en:cocoa-and-its-products", "en:confectioneries", "en:candies", "en:sweet-snacks",
+           "en:biscuits-and-cakes", "en:chewing-gum", "en:crackers", "en:rusks"]
+  - to: food.drinks
+    tags: ["en:beverages", "en:waters", "en:teas", "en:coffees", "en:fruit-juices", "en:sodas",
+           "en:instant-beverages", "en:energy-drinks", "en:plant-based-beverages"]
+  - to: food.ready
+    tags: ["en:meals", "en:prepared-meals", "en:sandwiches", "en:pizzas", "en:soups", "en:salads",
+           "en:dishes", "en:ready-to-eat", "en:dumplings", "en:quiches"]
+  - to: food.sweets_snacks
+    tags: ["en:sweet-snacks", "en:snacks", "en:chocolates", "en:confectioneries", "en:biscuits-and-cakes",
+           "en:biscuits", "en:cakes", "en:candies", "en:chips-and-fries", "en:salty-snacks",
+           "en:desserts", "en:chewing-gum", "en:jams", "en:spreads", "en:honeys"]
+  - to: food.meat_fish
+    tags: ["en:meats", "en:fishes", "en:seafood", "en:meats-and-their-products", "en:fishes-and-their-products",
+           "en:poultries", "en:sausages", "en:charcuteries", "en:hams"]
+  - to: food.bakery
+    tags: ["en:breads", "en:pastries", "en:viennoiseries", "en:buns", "en:bakery-products", "en:flatbreads"]
+  # Sauces and condiments BEFORE produce: ketchup and tartar sauce carry fruit-and-vegetable ancestors.
+  - to: food.grocery
+    tags: ["en:sauces", "en:condiments", "en:ketchups", "en:mayonnaises"]
+  - to: food.produce
+    tags: ["en:fruits", "en:vegetables", "en:fruits-and-vegetables-based-foods", "en:fresh-plant-based-foods",
+           "en:mushrooms", "en:nuts", "en:dried-fruits"]
+  - to: food.grocery
+    tags: ["en:cereals-and-potatoes", "en:cereals-and-their-products", "en:pastas", "en:fats", "en:condiments",
+           "en:sauces", "en:canned-foods", "en:spices", "en:flours", "en:sugars", "en:legumes-and-their-products",
+           "en:rices", "en:oils", "en:groceries", "en:plant-based-foods"]
+
+beauty:                     # D4 Open Beauty Facts
+  - to: health.hygiene
+    tags: ["en:toothpastes", "en:oral-care", "en:deodorants", "en:soaps", "en:shampoos", "en:shower-gels",
+           "en:hygiene", "en:feminine-hygiene", "en:shaving", "en:body-cleansing", "en:hair-care",
+           "en:toothbrushes", "en:dental-care", "en:oral-hygiene", "en:cotton-swabs", "en:sanitary-protection"]
+  - to: clothes_beauty.cosmetics
+    default: true
+
+products:                   # D3 Open Products Facts
+  # No `default` rule on purpose: the first run showed home.household turned into a junk bin
+  # (socks, backpacks, cottage cheese, one-word brand names). Unmatched products are dropped;
+  # the seed dictionary covers these classes.
+  - to: home.chemicals
+    tags: ["en:cleaning-products", "en:detergents", "en:household-cleaners", "en:laundry", "en:dishwashing"]
+  - to: home.appliances
+    tags: ["en:electronics", "en:electrical-appliances", "en:appliances", "en:phones", "en:computers", "en:batteries"]
+  - to: home.repair
+    tags: ["en:tools", "en:paints", "en:building-materials", "en:hardware", "en:diy"]
+  - to: clothes_beauty.clothes
+    tags: ["en:clothing", "en:clothes", "en:footwear", "en:shoes", "en:socks", "en:underwear", "en:bags", "en:backpacks"]
+  - to: home.household
+    tags: ["en:household-goods", "en:kitchenware", "en:household-supplies", "en:storage", "en:bags-for-waste"]
+
+pet_food:                   # D5 Open Pet Food Facts: everything is pet food
+  - to: pets.food
+    default: true

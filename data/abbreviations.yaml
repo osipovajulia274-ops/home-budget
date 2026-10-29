@@ -1,0 +1,250 @@
+# Rules for turning a clean product name into a "cash-register" style line.
+# Used by ml/receipt_noise.py. Based on the line styles seen in the CDEK receipts (D6):
+#   "1655Б0Л. КРУЖ. Мол.ул/паст. 2,5% 1980г", "БЗМЖ СЛИВКИ КЛЕВЕР у/ПА",
+#   "ШТ.[М+]ГУРМЭ ПЕРЛ ПАУЧ 75Г Д/КОШ", "8361 БАНАНЫ 1КГ"
+
+# word (lowercase stem) -> possible abbreviations
+word_abbr:
+  молоко: [мол., мол]
+  молочный: [мол., молоч.]
+  молочная: [мол., молоч.]
+  пастеризованное: [паст., пастер., ул/паст.]
+  пастеризованный: [паст., пастер.]
+  ультрапастеризованное: [ул/паст., у/паст.]
+  стерилизованное: [стер., стерил.]
+  охлажденная: [охл., охлажд.]
+  охлажденный: [охл., охлажд.]
+  охлажденное: [охл., охлажд.]
+  замороженный: [зам., замор.]
+  замороженная: [зам., замор.]
+  замороженное: [зам., замор.]
+  высший сорт: [в/с, высш.с.]
+  высший: [в/с, высш.]
+  сорт: [с.]
+  натуральный: [нат., натур.]
+  натуральная: [нат., натур.]
+  натуральное: [нат., натур.]
+  сливочное: [слив., сл.]
+  сливочный: [слив., сл.]
+  сливки: [слив., сл.]
+  сметана: [смет., смет]
+  йогурт: [йог., йогурт]
+  творог: [твор., тв.]
+  копченый: [копч., к/к]
+  копченая: [копч.]
+  вареная: [вар., в.]
+  вареный: [вар., в.]
+  колбаса: [колб., колб]
+  консервированный: [конс., к-в]
+  консервы: [конс.]
+  без сахара: [б/с, без сах.]
+  безалкогольный: [б/а, безалк.]
+  газированный: [газ., газир.]
+  газированная: [газ., газир.]
+  негазированная: [н/г, негаз.]
+  питьевая: [пить., пит.]
+  стекло: [ст/б, с/б]
+  жестяная банка: [ж/б, жб]
+  пластиковая бутылка: [пл/б, пэт]
+  пластиковый: [пл., пласт.]
+  упаковка: [уп., упак.]
+  пакет: [пак., пкт]
+  бутылка: [бут., бутыл.]
+  банка: [банк., б.]
+  для кошек: [д/кош, для кош.]
+  для собак: [д/соб, для соб.]
+  для посудомоечных: [д/посуд.]
+  для стирки: [д/стирки]
+  для мытья: [д/мытья]
+  для детей: [д/дет.]
+  с добавлением: [с доб.]
+  со вкусом: [со вк., с/вк]
+  шоколадный: [шок., шоколад.]
+  шоколад: [шок.]
+  печенье: [печ., печень]
+  клубничный: [клуб., клубнич.]
+  ванильный: [ван., ванил.]
+  кусочками: [куск.]
+  мороженое: [морож., мор-ое]
+  картофель: [карт., картоф.]
+  помидоры: [пом., помид.]
+  огурцы: [огур., огурц.]
+  куриное: [кур., курин.]
+  куриная: [кур., курин.]
+  куриные: [кур., курин.]
+  говядина: [говяд., гов.]
+  свинина: [свин., св.]
+  подсолнечное: [подсол., подс.]
+  оливковое: [олив., оливк.]
+  растительное: [раст., растит.]
+  рафинированное: [рафин., раф.]
+  средство: [ср-во, ср.]
+  чистящее: [чист., чистящ.]
+  моющее: [мойщ., мою.]
+  стиральный: [стир., стирал.]
+  порошок: [пор., порош.]
+  туалетная: [туал., туалет.]
+  туалетный: [туал., туалет.]
+  бумага: [бум., бумага]
+  салфетки: [салф., салфет.]
+  влажные: [влаж., влажн.]
+  таблетки: [табл., таб.]
+  капсулы: [капс., кап.]
+  раствор: [р-р, раств.]
+  мужская: [муж., м.]
+  женская: [жен., ж.]
+  детская: [дет., детск.]
+  детский: [дет., детск.]
+  детское: [дет., детск.]
+
+# Random fragments that cash registers put before / after names.
+# The probabilities of using them are per noise profile (`article`, `position`, `token`, `decor` below).
+prefixes:
+  article_digits: {digits: [4, 6], barcode_p: 0.08}   # "8361 ", "41933 "; 8% are EAN-13 barcodes
+  tokens: ["[М]", "[М+]", "ШТ.", "БЗМЖ", "ШТ", "[Т]", "(М)"]
+  position_number: {}                          # "1 ", "2 " (canteen / HoReCa receipts)
+
+# Letters-only markers appended to a name. They give short names more distinct lines without random digits.
+decor_tokens: ["шт.", "шт", "ШТ", "уп.", "п/у", "(шт)", "[М]", "<СП>", "*", "пэт"]
+
+suffixes:
+  # Units are chosen by what the subcategory really sells (unit_by_subcategory below): a shirt never
+  # gets "7,1Л". Number pools are realistic pack sizes.
+  numbers:
+    mass: [50, 75, 100, 120, 150, 180, 200, 250, 300, 350, 400, 450, 500, 900]
+    ml: [200, 250, 330, 350, 450, 500, 750, 900]
+    vol: ["0,33", "0.33", "0,5", "0.5", "1", "1,5", "1.5", "2", "0,75", "1,25"]
+    count: [2, 3, 4, 5, 6, 10, 12, 20, 30, 50, 100]
+    pack: [10, 20, 24, 30, 36, 50, 100]          # "№10" on pharmacy receipts
+    fraction: [100, 200, 300, 400, 500]          # "1/300" bread / cheese counters
+  kinds:
+    mass: ["{mass}Г", "{mass}г", "{mass} г", "{mass}гр", "1КГ", "1кг", "1 кг", "0,{d}кг", "ВЕС", "вес", "1/{fraction}", "{mass}"]
+    volume: ["{vol}Л", "{vol}л", "{vol} л", "{ml}МЛ", "{ml}мл", "{ml} мл", "{vol}", "{vol} л."]
+    count: ["{count}ШТ", "{count}шт", "{count} шт.", "№{pack}", "шт."]
+  any_weights: {mass: 0.5, volume: 0.3, count: 0.2}   # kind "any" draws one of the three
+
+# Which units make sense per subcategory. kinds: mass | volume | count | any | none (default none).
+unit_by_subcategory:
+  food.dairy: any
+  food.meat_fish: mass
+  food.produce: mass
+  food.bakery: mass
+  food.grocery: mass
+  food.sweets_snacks: mass
+  food.drinks: volume
+  food.alcohol: volume
+  food.ready: mass
+  health.hygiene: any
+  health.pharmacy: count
+  clothes_beauty.cosmetics: any
+  home.chemicals: none
+  home.household: count
+  family_kids.goods: none
+  pets.food: mass
+
+# Fixed register widths seen in D6: excess of lines of exactly 22 and 35 characters. Probability of
+# using each width when a line is truncated; the rest is uniform in the profile's truncate_range.
+truncate_widths:
+  - [22, 0.40]
+  - [35, 0.20]
+
+# Visual look-alike confusions used for OCR-style typos (direction: either way).
+ocr_confusions:
+  - ["О", "0"]
+  - ["З", "3"]
+  - ["Б", "6"]
+  - ["l", "1"]
+  - ["I", "1"]
+  - ["В", "8"]
+  - ["о", "0"]
+
+# Cyrillic letters that have identical-looking latin twins (cyr -> latin).
+latin_doubles:
+  А: A
+  В: B
+  Е: E
+  К: K
+  М: M
+  Н: H
+  О: O
+  Р: P
+  С: C
+  Т: T
+  Х: X
+  а: a
+  е: e
+  о: o
+  р: p
+  с: c
+  х: x
+  у: y
+
+# Bank-statement style decoration (card payments look like "POS 4412 YANDEX TAXI MOSCOW RU").
+bank_style:
+  prefixes: ["Оплата ", "ОПЛАТА ", "POS ", "PAYMENT ", "Покупка ", "CARD*", "SBP ", "RUS ", "Списание ", "Оплата товаров и услуг "]
+  suffixes: [" MOSCOW RU", " RUS", " MOSKVA", " SPB RU", " RU", " г. Москва", " Москва", " *{d}{d}{d}{d}", " {d}{d}{d}{d}", " 7{d}{d}{d}", " KAZAN RU", " EKATERINBURG"]
+  both_p: 0.3          # chance to add both a prefix and a suffix when the style is applied
+
+# Probabilities per noise profile. goods = products on a shop receipt;
+# meal = café checks (cleaner, few abbreviations); service = taxi, utilities, subscriptions.
+#
+# Calibration (PROGRESS.md, "Калибровка шума"): the rates were chosen by comparing aggregate style shares
+# (upper-case lines, leading digits, bracket tokens, digits, units, length) of OUR goods lines with the real
+# D6 lines that are NOT eating-out, group by group. Only shares are used, no D6 text.
+# The eating-out group is deliberately NOT matched: 47% of D6 café lines start with "1 " because they come
+# from one point-of-sale format, and copying that into the training data would feed the test set's own
+# quirk to the model.
+#
+# Keys:  upper / abbreviate / clip / drop_word / truncate / decor  - cosmetic changes (may be boosted when a
+#                                                                    thin class needs more distinct lines)
+#        article / position / token  - probability of an article code / position number / marker token
+#        suffix                      - probability of a unit suffix ("500Г"), only where unit_by_subcategory allows
+#        bank_style / typo / latin_double
+# Lines with random digits or typos are handled as a separate stratum in noisy_variants(), so these
+# probabilities are the real shares in the dataset (they are not distorted by duplicate removal).
+profiles:
+  goods:
+    upper: 0.20
+    abbreviate: 0.55
+    truncate: 0.20
+    truncate_range: [24, 40]
+    article: 0.13
+    position: 0.06
+    token: 0.05
+    suffix: 0.32
+    decor: 0.05
+    typo: 0.003
+    latin_double: 0.0015
+    bank_style: 0.0
+    drop_word: 0.04
+    clip: 0.30
+  meal:
+    upper: 0.03
+    abbreviate: 0.15
+    truncate: 0.08
+    truncate_range: [24, 38]
+    article: 0.02
+    position: 0.15
+    token: 0.0
+    suffix: 0.02
+    decor: 0.0
+    typo: 0.002
+    latin_double: 0.0015
+    bank_style: 0.10
+    drop_word: 0.04
+    clip: 0.10
+  service:
+    upper: 0.30
+    abbreviate: 0.10
+    truncate: 0.15
+    truncate_range: [24, 38]
+    article: 0.01
+    position: 0.0
+    token: 0.0
+    suffix: 0.0
+    decor: 0.0
+    typo: 0.002
+    latin_double: 0.0015
+    bank_style: 0.40
+    drop_word: 0.05
+    clip: 0.05

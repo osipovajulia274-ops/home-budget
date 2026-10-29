@@ -1,0 +1,312 @@
+{
+  "rows": 63145,
+  "by_split": {
+    "train": 50577,
+    "val": 6290,
+    "test_synth": 6278
+  },
+  "by_source": {
+    "aug": 52874,
+    "off": 7192,
+    "seed": 2901,
+    "obf": 131,
+    "opff": 35,
+    "opf": 12
+  },
+  "by_subcategory": {
+    "clothes_beauty.clothes": {
+      "train": 342,
+      "val": 44,
+      "test_synth": 35,
+      "total": 421
+    },
+    "clothes_beauty.cosmetics": {
+      "train": 510,
+      "val": 69,
+      "test_synth": 71,
+      "total": 650
+    },
+    "clothes_beauty.salons": {
+      "train": 321,
+      "val": 37,
+      "test_synth": 39,
+      "total": 397
+    },
+    "eating_out.cafe": {
+      "train": 1543,
+      "val": 216,
+      "test_synth": 191,
+      "total": 1950
+    },
+    "eating_out.coffee": {
+      "train": 324,
+      "val": 35,
+      "test_synth": 45,
+      "total": 404
+    },
+    "eating_out.delivery": {
+      "train": 334,
+      "val": 41,
+      "test_synth": 44,
+      "total": 419
+    },
+    "eating_out.fastfood": {
+      "train": 328,
+      "val": 34,
+      "test_synth": 36,
+      "total": 398
+    },
+    "education.books": {
+      "train": 346,
+      "val": 36,
+      "test_synth": 34,
+      "total": 416
+    },
+    "education.courses": {
+      "train": 357,
+      "val": 52,
+      "test_synth": 50,
+      "total": 459
+    },
+    "family_kids.activities": {
+      "train": 326,
+      "val": 36,
+      "test_synth": 36,
+      "total": 398
+    },
+    "family_kids.goods": {
+      "train": 831,
+      "val": 94,
+      "test_synth": 111,
+      "total": 1036
+    },
+    "family_kids.school": {
+      "train": 379,
+      "val": 48,
+      "test_synth": 40,
+      "total": 467
+    },
+    "food.alcohol": {
+      "train": 1095,
+      "val": 126,
+      "test_synth": 132,
+      "total": 1353
+    },
+    "food.bakery": {
+      "train": 1751,
+      "val": 222,
+      "test_synth": 210,
+      "total": 2183
+    },
+    "food.dairy": {
+      "train": 5969,
+      "val": 732,
+      "test_synth": 732,
+      "total": 7433
+    },
+    "food.drinks": {
+      "train": 4223,
+      "val": 502,
+      "test_synth": 526,
+      "total": 5251
+    },
+    "food.grocery": {
+      "train": 6246,
+      "val": 804,
+      "test_synth": 780,
+      "total": 7830
+    },
+    "food.meat_fish": {
+      "train": 2344,
+      "val": 284,
+      "test_synth": 291,
+      "total": 2919
+    },
+    "food.produce": {
+      "train": 1446,
+      "val": 185,
+      "test_synth": 180,
+      "total": 1811
+    },
+    "food.ready": {
+      "train": 1231,
+      "val": 155,
+      "test_synth": 161,
+      "total": 1547
+    },
+    "food.sweets_snacks": {
+      "train": 10888,
+      "val": 1369,
+      "test_synth": 1379,
+      "total": 13636
+    },
+    "health.doctors": {
+      "train": 345,
+      "val": 46,
+      "test_synth": 43,
+      "total": 434
+    },
+    "health.hygiene": {
+      "train": 568,
+      "val": 64,
+      "test_synth": 70,
+      "total": 702
+    },
+    "health.pharmacy": {
+      "train": 395,
+      "val": 44,
+      "test_synth": 45,
+      "total": 484
+    },
+    "health.sport": {
+      "train": 326,
+      "val": 40,
+      "test_synth": 40,
+      "total": 406
+    },
+    "home.appliances": {
+      "train": 323,
+      "val": 37,
+      "test_synth": 38,
+      "total": 398
+    },
+    "home.chemicals": {
+      "train": 331,
+      "val": 40,
+      "test_synth": 40,
+      "total": 411
+    },
+    "home.household": {
+      "train": 370,
+      "val": 49,
+      "test_synth": 47,
+      "total": 466
+    },
+    "home.repair": {
+      "train": 333,
+      "val": 37,
+      "test_synth": 37,
+      "total": 407
+    },
+    "housing.internet_mobile": {
+      "train": 348,
+      "val": 35,
+      "test_synth": 35,
+      "total": 418
+    },
+    "housing.rent": {
+      "train": 323,
+      "val": 40,
+      "test_synth": 39,
+      "total": 402
+    },
+    "housing.utilities": {
+      "train": 331,
+      "val": 40,
+      "test_synth": 44,
+      "total": 415
+    },
+    "leisure.events": {
+      "train": 344,
+      "val": 45,
+      "test_synth": 44,
+      "total": 433
+    },
+    "leisure.games": {
+      "train": 323,
+      "val": 49,
+      "test_synth": 43,
+      "total": 415
+    },
+    "leisure.hobby": {
+      "train": 362,
+      "val": 38,
+      "test_synth": 46,
+      "total": 446
+    },
+    "leisure.travel": {
+      "train": 327,
+      "val": 43,
+      "test_synth": 40,
+      "total": 410
+    },
+    "other.transfers": {
+      "train": 331,
+      "val": 45,
+      "test_synth": 45,
+      "total": 421
+    },
+    "other.unknown": {
+      "train": 345,
+      "val": 50,
+      "test_synth": 37,
+      "total": 432
+    },
+    "pets.food": {
+      "train": 362,
+      "val": 48,
+      "test_synth": 42,
+      "total": 452
+    },
+    "pets.goods": {
+      "train": 333,
+      "val": 35,
+      "test_synth": 37,
+      "total": 405
+    },
+    "pets.vet": {
+      "train": 343,
+      "val": 40,
+      "test_synth": 38,
+      "total": 421
+    },
+    "subscriptions.cloud_apps": {
+      "train": 323,
+      "val": 36,
+      "test_synth": 36,
+      "total": 395
+    },
+    "subscriptions.other": {
+      "train": 330,
+      "val": 36,
+      "test_synth": 35,
+      "total": 401
+    },
+    "subscriptions.streaming": {
+      "train": 327,
+      "val": 35,
+      "test_synth": 45,
+      "total": 407
+    },
+    "transport.car_service": {
+      "train": 336,
+      "val": 43,
+      "test_synth": 45,
+      "total": 424
+    },
+    "transport.fuel": {
+      "train": 355,
+      "val": 53,
+      "test_synth": 55,
+      "total": 463
+    },
+    "transport.public": {
+      "train": 367,
+      "val": 48,
+      "test_synth": 46,
+      "total": 461
+    },
+    "transport.taxi": {
+      "train": 342,
+      "val": 53,
+      "test_synth": 43,
+      "total": 438
+    }
+  },
+  "overlap": {
+    "train&val": 0,
+    "train&test_synth": 0,
+    "val&test_synth": 0
+  },
+  "seed_only": false
+}

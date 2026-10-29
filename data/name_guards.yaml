@@ -1,0 +1,114 @@
+# Lexical sanity layer for names that come from Open*Facts (applied in ml/name_clean.py).
+#
+# Why: OFF category tags are noisy. In the first real run eggs landed in "alcohol", kefir in "drinks",
+# yoghurt in "sweets", buckwheat in "pet food". The tag map (off_category_map.yaml) is fixed too, but
+# a name-based check catches what tags miss. Every action is counted and sampled into
+# ml/reports/off_guard_report.json - review it after each run and edit this file.
+#
+# Matching is on the lower-cased name with ё -> е:
+#   stems  - match at the START of a word   (стем "кефир" matches "кефирный")
+#   words  - match only a WHOLE word        ("сыр" does not match "сыроватка")
+#   unless_* - if any of these match, the rule is skipped (e.g. "со вкусом сыра" is not cheese)
+# First matching rule wins. `from` / `subcategories` accept exact ids or "food.*" style prefixes.
+
+drop_if:
+  - id: petfood_is_human_food
+    subcategories: [pets.food]
+    stems: [гречк, гречнев, макарон, спагетт, сахар, мучн, шоколад, печен, кофе, круп, пшен, овсян, горох, фасол,
+            чечевиц, кукуруз, йогурт, творог, колбас, майонез, кетчуп]
+    words: [мука, соль, чай, рис, сыр, молоко, масло, хлеб, мед, сок]
+    unless_stems: [корм, кошк, кошач, котят, собак, щенк, питомц, животн, лакомств, паштет, пауч, felix, whiskas,
+                   purina, pro plan, friskies, royal, sheba, kitekat, gourmet, darling, monge, brit, hill, acana,
+                   orijen, dog, cat, pet, ветерин, диет, стерилиз]
+  - id: household_is_food
+    subcategories: [home.household]
+    stems: [творог, молок, кефир, йогурт, сметан, колбас, мяс, хлеб, сахар, печень, конфет, шоколад, макарон]
+    words: [сыр, мука, соль, чай, кофе]
+
+reassign:
+  # --- sweets: checked FIRST so "печенье с молоком" never becomes dairy --------------------------------
+  - id: sweets_stems
+    to: food.sweets_snacks
+    from: [food.grocery, food.drinks, food.produce, food.bakery]
+    stems: [печенье, печиво, вафл, конфет, шоколад, пряник, зефир, мармелад, драже, батончик, кекс, карамел,
+            леденц, халв, пастил]
+    unless_stems: [горяч, напиток, коктейль, молок, какао-напит, соус, кетчуп, майонез, горчиц, аджик]
+  # --- sauces and condiments are grocery ----------------------------------------------------------
+  - id: sauce_stems
+    to: food.grocery
+    from: [food.produce, food.sweets_snacks, food.drinks]
+    stems: [кетчуп, соус, майонез, горчиц, аджик]
+    unless_stems: [хлопь, чипс, сухарик, снек, вкус, печен, конфет, шоколад, морожен, пломбир, эскимо, десерт, торт,
+                   пирожн, кекс, вафл, карамел, пряник, зефир, халв, мармелад, драже, батончик]
+  # --- dairy and eggs (taxonomy: food.dairy = "Молочное и яйца") ---------------------------------
+  - id: dairy_stems
+    to: food.dairy
+    from: [food.drinks, food.sweets_snacks, food.alcohol, food.grocery, food.ready, food.bakery, food.produce,
+           food.meat_fish, home.household]
+    stems: [кефир, ряженк, простокваш, йогурт, творог, творож, сметан, кисломолоч, айран, мацони, сливк]
+    words: [сыр, сыры, сырок, сырки, яйцо, яйца, яиц]
+    unless_stems: [шоколад, глазир, покрыт, начинк, вкус, ароматиз, конфет, батончик, печен, вафл, мороженое,
+                   пломбир, эскимо, десерт, орех, хлопь, мюсли, сухарик, чипс, снек, драже, мармелад, кекс, торт,
+                   пирожн, макарон, лапш, майонез, соус, хлеб, булочк, салат, пельмен, kinder, киндер,
+                   коктейль, пицц, бутерброд, сэндвич, крем-сыр, соус]
+    unless_words: [паста, пасты, кофе, суп, супы]
+  - id: dairy_milk
+    to: food.dairy
+    from: [food.drinks, food.sweets_snacks, food.grocery, food.ready]
+    words: [молоко, молока]
+    unless_stems: [кокос, миндал, овсян, соев, рисов, ореховое, растительн, сгущ, шоколад, коктейль, напиток,
+                   вкус, печен, конфет, мюсли, хлопь, каш, десерт, сухое, сухо, порошок, аромат, торт, пряник, вафл,
+                   печиво, чай, пирог, булоч, кекс, пирожн, мороженое, пломбир]
+  - id: dairy_butter
+    to: food.dairy
+    from: [food.grocery, food.sweets_snacks]
+    stems: [масло сливоч, сливочн масл, масло слив]
+    unless_stems: [шоколад, печен, вкус]
+  # --- hygiene vs cosmetics -----------------------------------------------------------------------
+  - id: hygiene_stems
+    to: health.hygiene
+    from: [clothes_beauty.cosmetics]
+    stems: [зубн, мыло, мыл, шампун, дезодорант, прокладк, тампон, бритв, ватн, гель для душ, пена для ванн,
+            ополаскивател для рта, бумага туалет, туалетн бумаг, туалетная бумага]
+  # --- baby goods ---------------------------------------------------------------------------------
+  - id: baby_stems
+    to: family_kids.goods
+    from: [home.household, clothes_beauty.cosmetics, health.hygiene]
+    stems: [подгузник, памперс, пелен, пустышк, детское пюре, молочная смесь, детская смесь]
+  # --- aspic is a meat product, not a sweet (found in the third run: "Студень красная цена Сытный") -------
+  - id: meat_stems
+    to: food.meat_fish
+    from: [food.sweets_snacks, food.grocery, food.drinks, food.produce]
+    stems: [студен, холодец]
+  # --- pate is a meat product ("Паштет вегетарианский" stays where it is: too rare to guard) ---------------
+  - id: pate_stems
+    to: food.meat_fish
+    from: [food.sweets_snacks]
+    stems: [паштет]
+    unless_stems: [вегетар, овощ, гриб, растит, бобов, чечев, нут]
+  # --- sweeteners are grocery, not drinks ------------------------------------------------------------
+  - id: sweetener_stems
+    to: food.grocery
+    from: [food.drinks]
+    stems: [подсластител, сахарозаменител]
+  # --- laundry / dishwashing products filed as cosmetics (third run: "Средство для стирки ... BiMAX") --------
+  - id: chemicals_stems
+    to: home.chemicals
+    from: [clothes_beauty.cosmetics, health.hygiene, home.household]
+    stems: [средство для стирк, средство для мытья посуд, средство для чистк, средство для уборк, стиральн,
+            для стирк, посудомоеч, чистящ, моющ, отбеливател, пятновывод, освежител воздух, кондиционер для бель,
+            ополаскиват для бель]
+    unless_stems: [для рук, для лица, для тела, для волос, интим, детск, шампун, зубн]
+  # --- supplements filed as cosmetics ("цинк хелат 25мг") ------------------------------------------------
+  - id: pharmacy_stems
+    to: health.pharmacy
+    from: [clothes_beauty.cosmetics]
+    stems: [хелат, таблетк, капсул, пластыр, лейкопластыр, бинт]
+    words: [бад]
+    unless_stems: [крем, лосьон, маска, шампун, гель, бальзам, сыворот, масло, мыло, тоник, скраб, зубн, дезодорант,
+                   ополаскиват, пена, мицеллярн, помад, лак, туш]
+  # --- hangers are household goods ------------------------------------------------------------------------
+  - id: household_stems
+    to: home.household
+    from: [clothes_beauty.clothes]
+    stems: [вешалк, вешалок]

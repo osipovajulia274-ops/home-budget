@@ -1,0 +1,90 @@
+# 13 categories / 48 subcategories. IDs are stable: models, DB and rules refer to them.
+# Top-level category = prefix of the subcategory ID.
+categories:
+  - id: food
+    title: Продукты
+    subcategories:
+      - {id: food.dairy, title: Молочное и яйца}
+      - {id: food.meat_fish, title: Мясо, рыба}
+      - {id: food.produce, title: Овощи, фрукты}
+      - {id: food.bakery, title: Хлеб, выпечка}
+      - {id: food.grocery, title: "Бакалея (крупы, макароны, масло, консервы)"}
+      - {id: food.sweets_snacks, title: Сладкое и снеки}
+      - {id: food.drinks, title: "Безалкогольные напитки, чай, кофе"}
+      - {id: food.alcohol, title: Алкоголь}
+      - {id: food.ready, title: Готовая еда, кулинария}
+  - id: eating_out
+    title: Кафе и доставка
+    subcategories:
+      - {id: eating_out.cafe, title: "Кафе, рестораны, столовые"}
+      - {id: eating_out.fastfood, title: Фастфуд}
+      - {id: eating_out.coffee, title: Кофе с собой}
+      - {id: eating_out.delivery, title: Доставка еды}
+  - id: housing
+    title: Жильё и коммуналка
+    subcategories:
+      - {id: housing.rent, title: Аренда, ипотека}
+      - {id: housing.utilities, title: ЖКУ}
+      - {id: housing.internet_mobile, title: Интернет и связь}
+  - id: transport
+    title: Транспорт
+    subcategories:
+      - {id: transport.public, title: Общественный транспорт}
+      - {id: transport.taxi, title: "Такси, каршеринг"}
+      - {id: transport.fuel, title: Топливо}
+      - {id: transport.car_service, title: "Обслуживание авто, парковки"}
+  - id: health
+    title: Здоровье
+    subcategories:
+      - {id: health.pharmacy, title: Аптека}
+      - {id: health.doctors, title: "Врачи, анализы, стоматология"}
+      - {id: health.sport, title: "Спорт, абонементы"}
+      - {id: health.hygiene, title: Гигиена}
+  - id: home
+    title: Дом и быт
+    subcategories:
+      - {id: home.chemicals, title: Бытовая химия}
+      - {id: home.household, title: "Хозтовары, пакеты"}
+      - {id: home.appliances, title: Техника и электроника}
+      - {id: home.repair, title: "Ремонт, инструменты"}
+  - id: clothes_beauty
+    title: Одежда и красота
+    subcategories:
+      - {id: clothes_beauty.clothes, title: "Одежда, обувь"}
+      - {id: clothes_beauty.cosmetics, title: "Косметика, уход"}
+      - {id: clothes_beauty.salons, title: "Салоны, парикмахерские"}
+  - id: family_kids
+    title: Семья и дети
+    subcategories:
+      - {id: family_kids.goods, title: Детские товары и питание}
+      - {id: family_kids.activities, title: "Кружки, секции"}
+      - {id: family_kids.school, title: "Школа, канцтовары"}
+  - id: pets
+    title: Питомцы
+    subcategories:
+      - {id: pets.food, title: Корм}
+      - {id: pets.vet, title: Ветеринар}
+      - {id: pets.goods, title: "Аксессуары, наполнители"}
+  - id: leisure
+    title: Развлечения и хобби
+    subcategories:
+      - {id: leisure.events, title: "Кино, театры, концерты"}
+      - {id: leisure.games, title: Игры}
+      - {id: leisure.hobby, title: "Хобби, рукоделие, книги"}
+      - {id: leisure.travel, title: "Поездки, отели"}
+  - id: education
+    title: Образование
+    subcategories:
+      - {id: education.courses, title: "Курсы, репетиторы"}
+      - {id: education.books, title: Учебная литература}
+  - id: subscriptions
+    title: Подписки и сервисы
+    subcategories:
+      - {id: subscriptions.streaming, title: Стриминг}
+      - {id: subscriptions.cloud_apps, title: "Облака, приложения"}
+      - {id: subscriptions.other, title: Прочие регулярные списания}
+  - id: other
+    title: Прочее
+    subcategories:
+      - {id: other.unknown, title: Не распознано}
+      - {id: other.transfers, title: Переводы (не расходы)}
