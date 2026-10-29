@@ -1,0 +1,14 @@
+# Training / data preparation (Colab, Kaggle or a local machine). Never used on Render.
+torch
+onnx
+onnxruntime
+numpy
+pandas
+pyarrow
+duckdb
+scikit-learn
+matplotlib
+pyyaml
+huggingface_hub   # only to download the D6 dataset files; no model weights are ever loaded
+pytest
+httpx

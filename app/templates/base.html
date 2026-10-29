@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>{{ title }} — Домашняя бухгалтерия</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script>try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body data-page="{{ page }}">
+  <header class="top">
+    <a class="brand" href="/" title="Домашняя бухгалтерия">Бухгалтерия</a>
+    <nav class="top-links" aria-label="Дополнительно">
+      <a href="/subscriptions" {% if page == "subscriptions" %}aria-current="page"{% endif %}>Подписки</a>
+      <a href="/settings" {% if page == "settings" %}aria-current="page"{% endif %}>Настройки</a>
+    </nav>
+  </header>
+
+  <main class="wrap" id="main">
+    <noscript><p class="card">Для работы приложения нужен JavaScript.</p></noscript>
+    {% block content %}{% endblock %}
+    <p class="disclaimer">Демо-режим: данные привязаны к этому браузеру. Приложение описывает ваши траты и не является
+      финансовой консультацией.</p>
+  </main>
+
+  <nav class="tabbar" aria-label="Основное меню">
+    {% set items = [
+      ("home", "/", "Главная", '<path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>'),
+      ("add", "/add", "Добавить", '<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>'),
+      ("categories", "/categories", "Категории", '<circle cx="12" cy="12" r="9"/><path d="M12 3v9l6.4 6.4"/>'),
+      ("recommendations", "/recommendations", "Советы", '<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/>'),
+      ("goals", "/goals", "Цели", '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>'),
+    ] %}
+    {% for key, href, label, icon in items %}
+    <a href="{{ href }}" {% if page == key %}aria-current="page"{% endif %}>
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{{ icon|safe }}</svg>
+      <span>{{ label }}</span>
+    </a>
+    {% endfor %}
+  </nav>
+
+  <script src="/static/app.js" defer></script>
+</body>
+</html>

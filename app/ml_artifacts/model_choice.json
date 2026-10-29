@@ -1,0 +1,6 @@
+{
+ "classifier": "tfidf_logreg_baseline",
+ "reason": "real_test acc_cat / macro-F1 cat: cnn 0.605 / 0.513, baseline 0.629 / 0.614 (cnn - baseline -0.024 / -0.102), ensemble 0.627 / 0.548 (vs baseline -0.002 / -0.066); margin 0.01",
+ "threshold": 0.5,
+ "unknown": "other.unknown"
+}
