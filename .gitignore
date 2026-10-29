@@ -1,0 +1,25 @@
+# data & models in training (large / raw / contain real receipt text)
+ml/data/
+ml/models_out/
+*.parquet
+*.csv.gz
+# secrets and local state
+.env
+*.db
+server.log
+# archives and old copies
+*.zip
+home-budget/
+# python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+# os / ide
+.DS_Store
+.idea/
+.vscode/
+Thumbs.db
+# keep the fictional samples
+!data/samples/*.csv
