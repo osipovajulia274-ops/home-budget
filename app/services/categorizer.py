@@ -4,6 +4,7 @@
   tfidf_logreg_baseline  numpy-only TF-IDF + logistic regression (what the Stage 2 rule picked)
   char_cnn               ONNX char-CNN (onnxruntime is imported only in this case)
   ensemble               mean of both probability vectors
+  mlp                    numpy TF-IDF + one-hidden-layer neural network (ml/train_mlp.py), no extra libraries
 
 Priority for every item: (1) the user's own earlier correction for the same normalised title,
 (2) transfer rule, (3) the model; probability < threshold -> `other.unknown`.
@@ -21,6 +22,7 @@ import numpy as np
 from app.config import ARTIFACTS_DIR
 from app.services import taxonomy as tx
 from app.services.linear_classifier import LinearTfidfClassifier
+from app.services.mlp_classifier import MlpTfidfClassifier
 from app.services.normalize import encode_batch, normalize
 
 TRANSFER_TITLE_RE = re.compile(r"перевод|между своими|на свою карту", re.I)
@@ -48,7 +50,7 @@ def _softmax(x: np.ndarray) -> np.ndarray:
 
 class Categorizer:
     def __init__(self, labels: Sequence[str], choice: dict, baseline: Optional[LinearTfidfClassifier] = None,
-                 onnx_path: Optional[Path] = None):
+                 onnx_path: Optional[Path] = None, mlp: Optional[MlpTfidfClassifier] = None):
         self.labels = list(labels)
         self.kind: str = choice.get("classifier", "tfidf_logreg_baseline")
         self.threshold: float = float(choice.get("threshold", 0.5))
@@ -56,7 +58,11 @@ class Categorizer:
         self.baseline = baseline
         self._onnx_path = onnx_path
         self._session = None                  # created lazily: onnxruntime is only needed for cnn / ensemble
-        if self.kind != "char_cnn" and baseline is None:
+        self.mlp = mlp
+        if self.kind == "mlp":
+            if mlp is None:
+                raise ValueError("mlp model files are required for this classifier choice")
+        elif self.kind != "char_cnn" and baseline is None:
             raise ValueError("baseline model files are required for this classifier choice")
 
     @classmethod
@@ -67,7 +73,8 @@ class Categorizer:
         kind = choice.get("classifier", "tfidf_logreg_baseline")
         baseline = LinearTfidfClassifier.load(d) if kind in ("tfidf_logreg_baseline", "ensemble") else None
         onnx = d / "classifier.onnx" if kind in ("char_cnn", "ensemble") else None
-        return cls(labels, choice, baseline, onnx)
+        mlp = MlpTfidfClassifier.load(d) if kind == "mlp" else None
+        return cls(labels, choice, baseline, onnx, mlp)
 
     # ---- model ----
     def _cnn_proba(self, texts: Sequence[str]) -> np.ndarray:
@@ -85,6 +92,9 @@ class Categorizer:
             return np.zeros((0, len(self.labels)), dtype=np.float32)
         if self.kind == "char_cnn":
             return self._cnn_proba(texts)
+        if self.kind == "mlp":
+            assert self.mlp is not None
+            return self.mlp.predict_proba(list(texts))
         assert self.baseline is not None
         p = self.baseline.predict_proba(list(texts))
         if self.kind == "ensemble":
